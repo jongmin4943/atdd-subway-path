@@ -36,8 +36,8 @@ public class PathService {
 
         final List<Line> allLines = lineProvider.getAllLines();
         final Map<Long, Station> stationMap = createStationMapFrom(allLines);
-        final Station sourceStation = stationMap.computeIfAbsent(searchRequest.getSource(), throwStationNowFoundException());
-        final Station targetStation = stationMap.computeIfAbsent(searchRequest.getTarget(), throwStationNowFoundException());
+        final Station sourceStation = stationMap.computeIfAbsent(searchRequest.getSource(), throwStationNotFoundException());
+        final Station targetStation = stationMap.computeIfAbsent(searchRequest.getTarget(), throwStationNotFoundException());
 
         final DijkstraShortestPath<Station, DefaultWeightedEdge> path = new DijkstraShortestPath<>(buildGraph(allLines));
         final GraphPath<Station, DefaultWeightedEdge> shortestPath =
@@ -70,7 +70,7 @@ public class PathService {
         graph.setEdgeWeight(graph.addEdge(upStation, downStation), section.getDistance());
     }
 
-    private static Function<Long, Station> throwStationNowFoundException() {
+    private static Function<Long, Station> throwStationNotFoundException() {
         return id -> {
             throw new StationNotExistException(id);
         };
